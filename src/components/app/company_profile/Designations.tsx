@@ -51,6 +51,14 @@ const Designations: React.FC = () => {
     fetchDesignations();
   }, []);
 
+  const saveDesignationsToBackend = async () => {
+    try {
+      await postRequest("/api/private/designation", designationTitle);
+    } catch (error) {
+      console.error("Failed to save designations:", error);
+    }
+  };
+
   const formik = useFormik({
     initialValues: {
       designationTitle: "",
@@ -79,13 +87,7 @@ const Designations: React.FC = () => {
     });
   };
 
-  const saveDesignationsToBackend = async () => {
-    try {
-      await postRequest("/api/private/designation", designationTitle);
-    } catch (error) {
-      console.error("Failed to save designations:", error);
-    }
-  };
+ 
 
   const handleSave = async () => {
     saveDesignationsToBackend();

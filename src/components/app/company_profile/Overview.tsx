@@ -13,7 +13,7 @@ import {
   MenuItem,
 } from "@mui/material";
 import EditIcon from "@mui/icons-material/Edit";
-import { getRequest } from "../../../api/Api";
+import { getRequest, postRequest } from "../../../api/Api";
 import { GET_COMPANY_DATA } from "../../../api/Server";
 import { useFormik } from "formik";
 import * as Yup from "yup";
@@ -27,6 +27,7 @@ interface CompanyData {
   brandName: string;
   companyOfficialEmail: string;
   companyOfficialContact: string;
+  webSite: string;
   domainName: string;
   industryType: string;
 }
@@ -37,11 +38,17 @@ const Overview = () => {
     brandName: "",
     companyOfficialEmail: "",
     companyOfficialContact: "",
+    webSite: "",
+
     domainName: "",
     industryType: "",
   });
-
   const [isEditing, setIsEditing] = useState(false);
+
+  // Enable edit mode
+  const toggleEdit = () => {
+    setIsEditing(!isEditing);
+  };
 
   // Fetch the data when the component mounts
   useEffect(() => {
@@ -54,17 +61,28 @@ const Overview = () => {
       });
   }, []);
 
-  const toggleEdit = () => {
-    setIsEditing(!isEditing);
+  const postDataToBackend = async () => {
+    try {
+      await postRequest("/api/private/company", details);
+    } catch (error) {
+      console.error("Failed to save designations:", error);
+    }
   };
-  const handleSaveClick = () => {
-    formik.handleSubmit(); // Trigger Formik's submit function
+
+  //save data to backend
+  const handleSaveClick = async () => {
+    try {
+      await postDataToBackend();
+      formik.handleSubmit();
+    } catch (error) {
+      console.error("Error saving data:", error);
+    }
   };
 
   // Formik with Yup validation
   const formik = useFormik({
     initialValues: details,
-    enableReinitialize: true, // To populate data when fetched
+    enableReinitialize: true,
     validationSchema: Yup.object({
       registeredCompanyName: Yup.string()
         .required("Registered Company Name is required")
@@ -79,10 +97,10 @@ const Overview = () => {
       domainName: Yup.string().required("Domain Name is required"),
       industryType: Yup.string().required("Industry Type is required"),
     }),
-    onSubmit: (values) => {
-      console.log("Updated values:", values);
+    onSubmit: async (values) => {
+      await postRequest("/api/private/company", details);
       setDetails(values);
-      setIsEditing(false); // Exit edit mode after saving
+      setIsEditing(false);
     },
   });
 
@@ -203,16 +221,16 @@ const Overview = () => {
                       }}
                     >
                       <CustomTextField
-                        label="Domain Name"
-                        name="domainName"
-                        value={formik.values.domainName}
+                        label="WebSite"
+                        name="webSite"
+                        value={formik.values.webSite}
                         onChange={formik.handleChange}
                         error={
-                          formik.touched.domainName &&
-                          Boolean(formik.errors.domainName)
+                          formik.touched.webSite &&
+                          Boolean(formik.errors.webSite)
                         }
                         helperText={
-                          formik.touched.domainName && formik.errors.domainName
+                          formik.touched.webSite && formik.errors.webSite
                         }
                       />
                       <CustomTextField

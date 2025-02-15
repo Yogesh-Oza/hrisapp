@@ -25,3 +25,6 @@ export const GET_PHOTO: string = "/api/private/employee/profile-photo";
 
 export const GET_DESINAGATION: string =
   "http://localhost:4000/api/private/designation";
+
+export const GET_ADDRESS: string =
+  "http://localhost:4000/api/private/address/6692a191cb9bd1cf4e14a2da";
